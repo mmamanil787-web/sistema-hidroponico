@@ -44,7 +44,7 @@
             <h2>🔧 Configurar Conexión ESP32</h2>
             <div class="form-group">
                 <label for="esp32IP">IP del ESP32:</label>
-                <input type="text" id="esp32IP" placeholder="Ej: 192.168.1.135" value="192.168.1.135">
+                <input type="text" id="esp32IP" placeholder="Ej: 192.168.100.91" value="192.168.100.91">
             </div>
             <button class="login-button" onclick="probarConexion()">🔍 Probar Conexión</button>
             <div class="status" id="configStatus">Esperando configuración...</div>
@@ -92,7 +92,7 @@
     </div>
 
     <script>
-        let ESP32_BASE_URL = 'http://192.168.1.135';
+        let ESP32_BASE_URL = 'http://192.168.100.91';
         let usuarioActual = null;
 
         // CONFIGURACIÓN
