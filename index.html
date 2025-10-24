@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Hidropónico</title>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; 
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+        }
+        
+        .header { 
+            text-align: center; 
+            color: white; 
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+        
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 15px 0;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .login-card {
+            max-width: 450px;
+            margin: 40px auto;
+        }
+        
+        .form-group {
+            margin: 15px 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #4299e1;
+        }
+        
+        .login-button {
+            width: 100%;
+            padding: 12px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        
+        .login-button:hover {
+            background: #3182ce;
+        }
+        
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .data-item {
+            text-align: center;
+            padding: 20px 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #4299e1;
+        }
+        
+        .data-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        
+        .data-label {
+            color: #718096;
+            font-size: 0.9em;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .button.on { 
+            background: #48bb78; 
+            color: white; 
+        }
+        
+        .button.off { 
+            background: #f56565; 
+            color: white; 
+        }
+        
+        .button.auto { 
+            background: #4299e1; 
+            color: white; 
+        }
+        
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .online { 
+            background: #c6f6d5; 
+            color: #22543d; 
+            border: 2px solid #48bb78;
+        }
+        
+        .offline { 
+            background: #fed7d7; 
+            color: #742a2a; 
+            border: 2px solid #f56565;
+        }
+        
+        .info-box {
+            background: #e6fffa;
+            border: 2px solid #38b2ac;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .example-box {
+            background: #feebc8;
+            border: 2px solid #ed8936;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+        
+        .error-message {
+            background: #fed7d7;
+            color: #742a2a;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .data-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ENCABEZADO -->
+        <div class="header">
+            <h1>🌱 Sistema Hidropónico Automático</h1>
+            <h2>SEGUNDO FÍSICA - QUÍMICA</h2>
+        </div>
+
+        <!-- SECCIÓN LOGIN -->
+        <div id="loginSection" class="card login-card">
+            <h2 style="text-align: center; margin-bottom: 20px; color: #4a5568;">🔐 Iniciar Sesión</h2>
+            
+            <div class="error-message" id="errorMessage"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Usuario:</label>
+                    <input type="text" id="username" placeholder="Ejemplo: acapa, almendras" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" placeholder="Ejemplo: Acapa1!, Almendras2!" required>
+                </div>
+                
+                <button type="submit" class="login-button">🎯 INGRESAR AL SISTEMA</button>
+            </form>
+            
+            <div class="example-box">
+                <strong>📋 Ejemplos para probar:</strong><br><br>
+                <strong>Estudiante:</strong><br>
+                • Usuario: <code>acapa</code> → Contraseña: <code>Acapa1!</code><br>
+                • Usuario: <code>almendras</code> → Contraseña: <code>Almendras2!</code><br><br>
+                
+                <strong>Administrador:</strong><br>
+                • Usuario: <code>admin</code> → Contraseña: <code>Admin123!</code>
+            </div>
+            
+            <div class="info-box">
+                <strong>ℹ️ Información del sistema:</strong><br>
+                • 39 usuarios registrados<br>
+                • 3 administradores (control total)<br>
+                • 36 estudiantes (solo lectura)
+            </div>
+        </div>
+
+        <!-- SECCIÓN PRINCIPAL -->
+        <div id="dashboard" class="card" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="color: #4a5568;">📊 Monitoreo en Tiempo Real</h2>
+                <button onclick="logout()" style="padding: 8px 16px; background: #e53e3e; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                    🚪 Cerrar Sesión
+                </button>
+            </div>
+            
+            <div class="status online" id="connectionStatus">
+                🔄 Conectando al sistema ESP32...
+            </div>
+            
+            <!-- DATOS DE SENSORES -->
+            <div class="data-grid" id="sensorData">
+                <!-- Los datos se cargan aquí automáticamente -->
+            </div>
+            
+            <!-- PANEL DE CONTROL -->
+            <div style="margin-top: 25px;">
+                <h2 style="color: #4a5568; margin-bottom: 15px;">🎛️ Control de Bomba</h2>
+                
+                <div class="button-group">
+                    <button class="button on" onclick="controlBomba('on')">
+                        🟢 ENCENDER
+                    </button>
+                    <button class="button off" onclick="controlBomba('off')">
+                        🔴 APAGAR
+                    </button>
+                    <button class="button auto" onclick="controlBomba('auto')">
+                        ⚙️ AUTOMÁTICO
+                    </button>
+                </div>
+                
+                <div class="status" id="bombaStatus">
+                    Estado: Cargando...
+                </div>
+                
+                <div id="permisoInfo" style="display: none;" class="info-box">
+                    ⚠️ <strong>Modo solo lectura:</strong> Los estudiantes no pueden controlar la bomba.
+                </div>
+            </div>
+            
+            <!-- INFO USUARIO -->
+            <div class="info-box" id="userInfo" style="margin-top: 15px;">
+                <!-- Se llena con info del usuario -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================== CONFIGURACIÓN ==================
+        // 📍 IMPORTANTE: CAMBIA ESTA URL POR LA IP DE TU ESP32
+        const ESP32_URL = 'http://192.168.1.100';  // ⬅️⬅️⬅️ CAMBIA ESTO POR TU IP
+        
+        let usuarioActual = null;
+        let intervaloDatos = null;
+
+        // ================== LOGIN ==================
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.toLowerCase();
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Mostrar carga
+            const boton = this.querySelector('button');
+            const textoOriginal = boton.textContent;
+            boton.textContent = '⏳ Conectando...';
+            boton.disabled = true;
+
+            try {
+                const response = await fetch(`${ESP32_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    usuarioActual = data;
+                    errorMessage.style.display = 'none';
+                    
+                    // Mostrar dashboard
+                    document.getElementById('loginSection').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    
+                    // Info usuario
+                    document.getElementById('userInfo').innerHTML = `
+                        <strong>👤 Usuario:</strong> ${data.nombre}<br>
+                        <strong>🎯 Tipo:</strong> ${data.esAdmin ? 'Administrador' : 'Estudiante'} ${data.numeroLista ? '(#' + data.numeroLista + ')' : ''}<br>
+                        <strong>🔧 Permisos:</strong> ${data.puedeControlarBomba ? 'Control total' : 'Solo lectura'}
+                    `;
+                    
+                    // Mostrar info permisos
+                    document.getElementById('permisoInfo').style.display = data.puedeControlarBomba ? 'none' : 'block';
+                    
+                    // Iniciar actualización
+                    iniciarActualizacionDatos();
+                    
+                } else {
+                    errorMessage.textContent = '❌ ' + data.message;
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                errorMessage.textContent = '❌ No se puede conectar al ESP32. Verifica:\n• Que el ESP32 esté encendido\n• Que la IP sea correcta\n• Que estén en la misma red WiFi';
+                errorMessage.style.display = 'block';
+            } finally {
+                boton.textContent = textoOriginal;
+                boton.disabled = false;
+            }
+        });
+
+        // ================== ACTUALIZAR DATOS ==================
+        function iniciarActualizacionDatos() {
+            actualizarDatosSensores();
+            intervaloDatos = setInterval(actualizarDatosSensores, 2000);
+        }
+
+        async function actualizarDatosSensores() {
+            const statusElement = document.getElementById('connectionStatus');
+            const sensorDataElement = document.getElementById('sensorData');
+            const bombaStatusElement = document.getElementById('bombaStatus');
+
+            try {
+                const response = await fetch(`${ESP32_URL}/data`);
+                
+                if (!response.ok) throw new Error('Error en respuesta');
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    if (data.error === 'No autenticado') {
+                        cerrarSesion();
+                        return;
+                    }
+                    throw new Error(data.error);
+                }
+
+                // Actualizar sensores
+                sensorDataElement.innerHTML = `
+                    <div class="data-item">
+                        <div class="data-value">${data.temperatura}°C</div>
+                        <div class="data-label">🌡️ Temperatura</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value">${data.humedad}%</div>
+                        <div class="data-label">💧 Humedad</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value">${data.tds}</div>
+                        <div class="data-label">🧪 TDS (ppm)</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value">${data.phConectado ? data.ph.toFixed(1) : 'N/C'}</div>
+                        <div class="data-label">📊 pH</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value">${data.bomba ? '🟢 ON' : '🔴 OFF'}</div>
+                        <div class="data-label">💦 Bomba</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value">${data.modo}</div>
+                        <div class="data-label">⚙️ Modo</div>
+                    </div>
+                `;
+
+                // Estado bomba
+                const estadoBomba = data.bomba ? '🟢 ENCENDIDA' : '🔴 APAGADA';
+                bombaStatusElement.textContent = `Bomba: ${estadoBomba} | Modo: ${data.modo} | Hora: ${data.horaActual}`;
+                bombaStatusElement.className = `status ${data.bomba ? 'online' : 'offline'}`;
+
+                // Conexión
+                statusElement.textContent = '✅ SISTEMA CONECTADO';
+                statusElement.className = 'status online';
+
+            } catch (error) {
+                statusElement.textContent = '❌ ERROR DE CONEXIÓN';
+                statusElement.className = 'status offline';
+            }
+        }
+
+        // ================== CONTROL BOMBA ==================
+        async function controlBomba(accion) {
+            if (!usuarioActual) {
+                alert('❌ No hay usuario autenticado');
+                return;
+            }
+            
+            if (!usuarioActual.puedeControlarBomba) {
+                alert('❌ Solo administradores pueden controlar la bomba');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${ESP32_URL}/bomba`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `estado=${accion}`
+                });
+
+                if (response.ok) {
+                    actualizarDatosSensores();
+                } else if (response.status === 403) {
+                    alert('❌ No tienes permisos');
+                }
+            } catch (error) {
+                alert('❌ Error de conexión');
+            }
+        }
+
+        // ================== CERRAR SESIÓN ==================
+        async function logout() {
+            if (intervaloDatos) clearInterval(intervaloDatos);
+            
+            try {
+                await fetch(`${ESP32_URL}/logout`);
+            } catch (error) {
+                // Ignorar errores
+            }
+            
+            // Resetear
+            usuarioActual = null;
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function cerrarSesion() {
+            if (intervaloDatos) clearInterval(intervaloDatos);
+            alert('⚠️ Sesión expirada');
+            window.location.reload();
+        }
+
+        console.log('🌐 Sistema Hidropónico GitHub Pages iniciado');
+        console.log('📡 URL ESP32:', ESP32_URL);
+    </script>
+</body>
+</html>
